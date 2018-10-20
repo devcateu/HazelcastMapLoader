@@ -1,6 +1,8 @@
 package eu.devcat.hazelcast.maploader;
 
 import com.hazelcast.core.MapLoader;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.util.Collection;
 import java.util.Map;
@@ -11,8 +13,9 @@ import java.util.stream.IntStream;
 
 public final class ValueLoader implements MapLoader<Key, Value> {
 
+    private static final Logger logger = LogManager.getLogger(ValueLoader.class);
     private final Random random = new Random();
-    private AtomicInteger atomicInteger = new AtomicInteger(0);
+    private final AtomicInteger atomicInteger = new AtomicInteger(0);
 
     @Override
     public Value load(Key key) {
@@ -21,7 +24,7 @@ public final class ValueLoader implements MapLoader<Key, Value> {
 
     @Override
     public Map<Key, Value> loadAll(Collection<Key> keys) {
-        System.out.format("Invocation %s, number of loading keys %s, Currently loading keys : %s \n",
+        logger.info("Invocation {}, number of loading keys {}, Currently loading keys : {}",
                 atomicInteger.incrementAndGet(),
                 keys.size(),
                 keys);
@@ -31,7 +34,7 @@ public final class ValueLoader implements MapLoader<Key, Value> {
 
     @Override
     public Iterable<Key> loadAllKeys() {
-        return IntStream.range(1, 10000)
+        return IntStream.range(1, 1_000_000)
                 .mapToObj(Key::new)
                 .collect(Collectors.toList());
     }
